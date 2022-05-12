@@ -1,8 +1,8 @@
-function imWithPoses = getFullSkeleton(filename, xRadius, yRadius)
+function [imWithPoses, bodyCoords] = getFullSkeleton(filename, xRadius, yRadius)
     im = imread(filename);
     [imWithPoses, bodyParts] = getOpenPoseSkeleton(im);
     handCoords = [bodyParts(4,3), bodyParts(4,4); bodyParts(6,3), bodyParts(6,4)];
-    
+    finalHand = [];
     for i=1:size(handCoords,1)
         handIm = imcrop(imWithPoses, [handCoords(i,1)- xRadius, handCoords(i,2)-yRadius, xRadius*2, yRadius]);
         [skeleton] = getSkeleton(handIm);
@@ -15,6 +15,9 @@ function imWithPoses = getFullSkeleton(filename, xRadius, yRadius)
             coords(j,1) = x + handCoords(i,1) - xRadius;
             coords(j,2) = y + handCoords(i,2) - yRadius;
         end
-        [imWithPoses]= renderSkeleton(imWithPoses, coords); 
+        [imWithPoses]= renderSkeleton(imWithPoses, coords);
+        finalHand = [finalHand; coords];
     end
+
+    bodyCoords = [bodyParts(:,1:2); bodyParts(:,3:4); finalHand];
 end

@@ -1,0 +1,3 @@
+% [img, bodyCoords] = getFullSkeleton('img/2.jpg', 70, 120);
+% imshow(img)
+[pseudoImg] = buildPseudoImage('img', 70, 120);
