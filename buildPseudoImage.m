@@ -2,6 +2,7 @@ function [pseudoImg] = buildPseudoImage(sequencePath, xRadius, yRadius)
     imgs = imageDatastore(sequencePath, "IncludeSubfolders", true, "LabelSource", "foldernames");
     pseudoImg = [];
     for i=1:size(imgs.Files)
+        fprintf('PROGRESS: %i / %i\n', i, size(imgs.Files))
         [~, bodyCoords] = getFullSkeleton(char(imgs.Files(i)), xRadius, yRadius);
         r = bodyCoords(:,1);
         g = bodyCoords(:, 2);
@@ -10,14 +11,13 @@ function [pseudoImg] = buildPseudoImage(sequencePath, xRadius, yRadius)
         sPseudoImg = size(pseudoImg, 1);
         sRgb = size(rgb, 1);
         if (sPseudoImg > sRgb)
-            temp=[rgb; zeros(sPseudoImg-sRgb, i, 3)];
+            temp=[rgb; zeros(sPseudoImg-sRgb, 1, 3)];
             pseudoImg = [pseudoImg, temp];
         elseif (sPseudoImg < sRgb)
             temp=[pseudoImg; zeros(sRgb-sPseudoImg, i, 3)];
             pseudoImg = [temp, rgb];
         else
             pseudoImg = [pseudoImg, rgb];
-        fprintf('PROGRESS: %i / %i\n', i, size(imgs.Files))
         end
     end
     pseudoImg = pseudoImg(:,2:size(pseudoImg,2),:);
