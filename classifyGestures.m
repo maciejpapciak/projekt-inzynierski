@@ -3,6 +3,10 @@ imds = imageDatastore('output', ...
     'LabelSource','foldernames'); 
 [imdsTrain,imdsValidation] = splitEachLabel(imds,0.7);
 
+imdsTest = imageDatastore('test', ...
+    'IncludeSubfolders',true, ...
+    'LabelSource','foldernames');
+
 net = googlenet;
 
 analyzeNetwork(net)
@@ -74,12 +78,12 @@ net = trainNetwork(augimdsTrain,lgraph,options);
 [YPred,probs] = classify(net,augimdsValidation);
 accuracy = mean(YPred == imdsValidation.Labels);
 
-idx = randperm(numel(imdsValidation.Files),4);
+idx = randperm(numel(imdsTest.Files),3);
 figure
-for i = 1:4
+for i = 1:3
     subplot(2,2,i)
-    I = readimage(imdsValidation,idx(i));
+    I = readimage(imdsTest,idx(i));
     imshow(I)
     label = YPred(idx(i));
-    title(string(label) + ", " + num2str(100*max(probs(idx(i),:)),3) + "%");
+    title(string(label) + ", " + num2str(100*max(probs(idx(i),:)),3) + "%" + " (" + string(imdsTest.Labels(idx(i))) + ")");
 end
