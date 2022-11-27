@@ -75,8 +75,10 @@ options = trainingOptions('sgdm', ...
 
 net = trainNetwork(augimdsTrain,lgraph,options);
 
-[YPred,probs] = classify(net,augimdsValidation);
-accuracy = mean(YPred == imdsValidation.Labels);
+augimdsTest = augmentedImageDatastore(inputSize(1:2), imdsTest);
+
+[YPred,probs] = classify(net, augimdsTest);
+accuracy = mean(YPred == imdsTest.Labels);
 
 idx = randperm(numel(imdsTest.Files),3);
 figure
